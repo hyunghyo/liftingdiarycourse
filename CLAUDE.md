@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
+## Project docs
+
+Before writing or modifying any code, ALWAYS check the `/docs` directory for a relevant doc (e.g. `docs/ui.md` for UI/styling work) and follow its guidance.
+
 ## Commands
 
 ```bash
