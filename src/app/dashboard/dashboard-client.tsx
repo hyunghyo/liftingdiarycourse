@@ -87,11 +87,9 @@ export function DashboardClient({
           <CardHeader>
             <div className="flex items-start justify-between gap-2">
               <CardTitle>{workout.title}</CardTitle>
-              {workout.completedAt && (
-                <CardDescription className="shrink-0 text-xs">
-                  Completed
-                </CardDescription>
-              )}
+              <CardDescription className="shrink-0 text-xs">
+                {workout.completedAt ? "Completed" : "In progress"}
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">

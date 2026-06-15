@@ -10,6 +10,8 @@ Before writing or modifying any code, ALWAYS check the `/docs` directory for a r
 
 - /docs/ui.md
 - /docs/data-fetching.md
+- /docs/data-mutations.md
+- /docs/auth.md
 
 ## Commands
 
