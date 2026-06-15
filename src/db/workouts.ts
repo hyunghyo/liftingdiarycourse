@@ -33,3 +33,25 @@ export async function getWorkoutsForUserByDate(userId: string, date: string) {
     },
   });
 }
+
+export async function getWorkoutById(userId: string, workoutId: string) {
+  return db.query.workouts.findFirst({
+    where: and(eq(workouts.id, workoutId), eq(workouts.userId, userId)),
+  });
+}
+
+export async function updateWorkout(
+  userId: string,
+  workoutId: string,
+  date: string,
+  title?: string,
+  startedAt?: Date,
+) {
+  const [workout] = await db
+    .update(workouts)
+    .set({ date, title, startedAt })
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)))
+    .returning();
+
+  return workout;
+}
