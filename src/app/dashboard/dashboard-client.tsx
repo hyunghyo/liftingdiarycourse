@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format, parse } from "date-fns";
-import { PencilIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
   Card,
   CardHeader,
@@ -52,37 +54,50 @@ export function DashboardClient({
   dateKey: string;
 }) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const date = parse(dateKey, "yyyy-MM-dd", new Date());
 
   function handleSelect(selected: Date | undefined) {
     if (!selected) return;
     router.push(`/dashboard?date=${format(selected, "yyyy-MM-dd")}`);
+    setOpen(false);
   }
 
   return (
     <main className="flex flex-1 flex-col gap-6 px-6 py-8 max-w-4xl mx-auto w-full">
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <Button asChild>
+          <Link href={`/dashboard/workout/new?date=${dateKey}`}>Log New Workout</Link>
+        </Button>
+      </div>
 
-      <div className="flex flex-col items-start gap-6 md:flex-row">
-        <Card className="w-fit shrink-0">
-          <CardContent className="p-0">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={handleSelect}
-            />
-          </CardContent>
-        </Card>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="w-fit">
+            <CalendarIcon />
+            {format(date, "do MMM yyyy")}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={handleSelect}
+          />
+        </PopoverContent>
+      </Popover>
 
-        <div className="flex flex-1 flex-col gap-6">
-          {workouts.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              No workouts logged for {format(date, "do MMM yyyy")}.
-            </p>
-          )}
+      <div className="flex flex-col gap-6">
+        {workouts.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            No workouts logged for {format(date, "do MMM yyyy")}.
+          </p>
+        )}
 
-          {workouts.map((workout) => (
-            <Card key={workout.id}>
+        {workouts.map((workout) => (
+          <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex flex-col gap-1">
@@ -97,12 +112,6 @@ export function DashboardClient({
                     <CardDescription className="text-xs">
                       {workout.completedAt ? "Completed" : "In progress"}
                     </CardDescription>
-                    <Button variant="ghost" size="icon-sm" asChild>
-                      <Link href={`/dashboard/workout/${workout.id}`}>
-                        <PencilIcon />
-                        <span className="sr-only">Edit workout</span>
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -128,8 +137,8 @@ export function DashboardClient({
                 ))}
               </CardContent>
             </Card>
-          ))}
-        </div>
+          </Link>
+        ))}
       </div>
     </main>
   );
