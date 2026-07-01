@@ -40,6 +40,23 @@ export async function getWorkoutById(userId: string, workoutId: string) {
   });
 }
 
+export async function getWorkoutWithExercises(userId: string, workoutId: string) {
+  return db.query.workouts.findFirst({
+    where: and(eq(workouts.id, workoutId), eq(workouts.userId, userId)),
+    with: {
+      workoutExercises: {
+        orderBy: (workoutExercises, { asc }) => [asc(workoutExercises.index)],
+        with: {
+          exercise: true,
+          sets: {
+            orderBy: (sets, { asc }) => [asc(sets.setNumber)],
+          },
+        },
+      },
+    },
+  });
+}
+
 export async function updateWorkout(
   userId: string,
   workoutId: string,
